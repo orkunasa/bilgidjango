@@ -1,0 +1,29 @@
+{% extends "website/settings/settings_base.html" %}
+{% load i18n %}
+{% load website_form_type %}
+{% block 'header_tag' %} {{ forms.0.media }} {% endblock %}
+{% block 'register_title' %} {{ subtitle }} {% endblock %}
+{% block 'settings_form' %}
+<div class="form-section col-xs-12 col-sm-11 col-md-11 col-md-offset-1">
+    <form id="main_form" {% if forms.0.is_multipart %}
+     enctype="multipart/form-data" {% endif %} method="post">
+     {% csrf_token %}
+      {% for field in forms|first %}
+        {% if field|field_title %}
+          <div class="input-group mb-2 mb-sm-0 login-input-group col-xs-offset-0 col-sm-offset-2 col-md-offset-0 file-description">{{ field|field_title }}</div>
+        {% endif %}
+        <div class="input-group mb-2 mb-sm-0 login-input-group col-xs-offset-0 col-sm-offset-1 col-md-offset-0">
+          {% if field|required %}<div class="required-asteriks" title="{% trans 'Zorunlu' %}">*</div> {% endif %}
+          <div id="{{ field.name }}__icon" class="input-group-addon"><i class="{{ field.label }} "></i></div>
+          <div id="{{ field.name }}__error" class="form-error-detail"></div>
+          {{ field }}
+          <div class="help-icon" help-text="{{ field.help_text }}" title="{{ field|field_title }}?"><i class="far fa-question-circle"></i></div>
+        </div>
+        {% if field|field_type == 'FileInput' and field.initial %}
+          {% trans "Yüklenen dosya:" %} <a href="{{ field.initial.url }}" target="_blank">{{ field.initial|truncatechars:40 }}</a>
+        {% endif %}
+      {% endfor %}
+      <button id="send-data" form="main_form" type="button" name="button" class="btn-login btn btn-default col-xs-12 col-sm-11 col-md-11">Kaydet</button>
+    </div>
+  </form>
+{% endblock %}
